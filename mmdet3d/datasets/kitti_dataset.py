@@ -89,7 +89,7 @@ class KittiDataset(Custom3DDataset):
             str: Name of the point cloud file.
         """
         pts_filename = osp.join(self.root_split, self.pts_prefix,
-                                f'{idx:06d}.bin')
+                                '%06d.bin'%int(idx))
         return pts_filename
 
     def get_data_info(self, index):
