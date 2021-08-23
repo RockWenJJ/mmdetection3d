@@ -108,7 +108,7 @@ class AnchorFreeBBoxCoder(PartialBinBasedBBoxCoder):
         results['center'] = base_xyz.detach() + reg_preds_trans[..., start:end]
         start = end
 
-        # decode center
+        # decode size
         end += 3
         # (batch_size, num_proposal, 3)
         results['size'] = reg_preds_trans[..., start:end]

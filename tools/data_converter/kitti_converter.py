@@ -5,8 +5,8 @@ from nuscenes.utils.geometry_utils import view_points
 from pathlib import Path
 
 from mmdet3d.core.bbox import box_np_ops
-from .kitti_data_utils import get_kitti_image_info, get_waymo_image_info
-from .nuscenes_converter import post_process_coords
+from kitti_data_utils import get_kitti_image_info, get_waymo_image_info
+from nuscenes_converter import post_process_coords
 
 kitti_categories = ('Pedestrian', 'Cyclist', 'Car')
 
@@ -541,3 +541,16 @@ def generate_record(ann_rec, x1, y1, x2, y2, sample_data_token, filename):
     coco_rec['iscrowd'] = 0
 
     return coco_rec
+
+if __name__ == '__main__':
+    import sys
+    if sys.argv.__len__() < 3:
+        print("Usage: python kitti_converter.py [create_kitti_info|create_waymo_info] [data_path] [save_path]")
+    else:
+        data_path, save_path = Path(sys.argv[2]), Path(sys.argv[3])
+        if sys.argv[1] == 'create_kitti_info':
+            create_kitti_info_file(data_path, 'kitti', save_path)
+        elif sys.argv[1] == "create_waymo_info":
+            create_kitti_info_file(data_path, 'waymo', save_path)
+        else:
+            print("Dataset must be kitti or waymo format!")
