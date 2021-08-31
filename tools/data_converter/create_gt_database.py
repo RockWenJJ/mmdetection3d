@@ -335,3 +335,19 @@ def create_groundtruth_database(dataset_class_name,
 
     with open(db_info_save_path, 'wb') as f:
         pickle.dump(all_db_infos, f)
+
+if __name__ == '__main__':
+    import sys
+    if sys.argv.__len__() < 3:
+        print("Usage: python create_gt_database.py [datasetname] [data_path]")
+    else:
+        data_path = sys.argv[2]
+        dataset_class_name = sys.argv[1]
+        if dataset_class_name.lower() == 'kittidataset':
+            create_groundtruth_database("KittiDataset", data_path, 'kitti', info_path=data_path+"/kitti_infos_train.pkl")
+        elif dataset_class_name.lower() == 'nuscenesdataset':
+            create_groundtruth_database('NuscenesDataset', data_path, 'nuscenes', info_path=data_path)
+        elif dataset_class_name.lower() == 'waymodataset':
+            create_groundtruth_database('WaymoDataset', data_path, 'waymo', info_path=data_path)
+        else:
+            print("Dataset must be kittidataset/nuscenesdataset/waymodataset!")

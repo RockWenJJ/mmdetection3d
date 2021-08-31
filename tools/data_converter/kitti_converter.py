@@ -551,6 +551,6 @@ if __name__ == '__main__':
         if sys.argv[1] == 'create_kitti_info':
             create_kitti_info_file(data_path, 'kitti', save_path)
         elif sys.argv[1] == "create_waymo_info":
-            create_kitti_info_file(data_path, 'waymo', save_path)
+            create_waymo_info_file(data_path, 'waymo', save_path)
         else:
             print("Dataset must be kitti or waymo format!")

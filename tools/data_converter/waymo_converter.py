@@ -513,3 +513,20 @@ class Waymo2KITTI(object):
         else:
             raise ValueError(mat.shape)
         return ret
+
+
+if __name__ == '__main__':
+    import sys
+
+    if sys.argv.__len__() < 3:
+        print("Usage: python waymo_converter.py [data_path] [save_path]")
+    else:
+        data_path, save_path = sys.argv[2], sys.argv[3]
+        waymo_dataset = Waymo2KITTI(load_dir=data_path, save_dir=save_path, prefix='')
+
+        # if sys.argv[1] == 'create_kitti_info':
+        #     create_kitti_info_file(data_path, 'kitti', save_path)
+        # elif sys.argv[1] == "create_waymo_info":
+        #     create_kitti_info_file(data_path, 'waymo', save_path)
+        # else:
+        #     print("Dataset must be kitti or waymo format!")
