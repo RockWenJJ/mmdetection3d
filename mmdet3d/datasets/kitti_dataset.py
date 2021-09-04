@@ -49,7 +49,8 @@ class KittiDataset(Custom3DDataset):
         pcd_limit_range (list): The range of point cloud used to filter
             invalid predicted boxes. Default: [0, -40, -3, 70.4, 40, 0.0].
     """
-    CLASSES = ('car', 'pedestrian', 'cyclist')
+    # CLASSES = ('car', 'pedestrian', 'cyclist')
+    CLASSES = ('Car', 'Pedestrian', 'Cyclist', 'Van', 'Truck', 'Tram', 'Misc', 'Person_sitting')
 
     def __init__(self,
                  data_root,

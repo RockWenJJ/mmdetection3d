@@ -6,16 +6,16 @@ _base_ = [
 # dataset settings
 dataset_type = 'KittiDataset'
 data_root = 'data/kitti/'
-class_names = ['Car']
+class_names = ['Car', 'Pedestrian', ]
 point_cloud_range = [0, -40, -5, 70, 40, 3]
 input_modality = dict(use_lidar=True, use_camera=False)
 db_sampler = dict(
     data_root=data_root,
     info_path=data_root + 'kitti_dbinfos_train.pkl',
     rate=1.0,
-    prepare=dict(filter_by_difficulty=[-1], filter_by_min_points=dict(Car=5)),
+    prepare=dict(filter_by_difficulty=[-1], filter_by_min_points=dict(Car=5, Pedestrian=10)),
     classes=class_names,
-    sample_groups=dict(Car=15))
+    sample_groups=dict(Car=15, Pedestrian=6))
 
 file_client_args = dict(backend='disk')
 # Uncomment the following if use ceph or other file clients.
@@ -90,19 +90,45 @@ test_pipeline = [
 data = dict(
     samples_per_gpu=4,
     workers_per_gpu=4,
-    train=dict(dataset=dict(ann_file=data_root + "kitti_infos_train_mini.pkl",
-              pipeline=train_pipeline)),
-    val=dict(ann_file=data_root + "kitti_infos_train_mini.pkl",
-             pipeline=test_pipeline),
-    test=dict(ann_file=data_root + "kitti_infos_train_mini.pkl",
-              pipeline=test_pipeline))
+    train=dict(
+            data_root=data_root,
+            ann_file=data_root + 'kitti_infos_train.pkl',
+            split='training',
+            pts_prefix='velodyne_reduced',
+            pipeline=train_pipeline,
+            modality=input_modality,
+            classes=class_names,
+            test_mode=False,
+            # we use box_type_3d='LiDAR' in kitti and nuscenes dataset
+            # and box_type_3d='Depth' in sunrgbd and scannet dataset.
+            box_type_3d='LiDAR'),
+    val=dict(
+            data_root=data_root,
+            ann_file=data_root + 'kitti_infos_val.pkl',
+            split='training',
+            pts_prefix='velodyne_reduced',
+            pipeline=test_pipeline,
+            modality=input_modality,
+            classes=class_names,
+            test_mode=True,
+            box_type_3d='LiDAR'),
+    test=dict(
+            data_root=data_root,
+            ann_file=data_root + 'kitti_infos_val.pkl',
+            split='training',
+            pts_prefix='velodyne_reduced',
+            pipeline=test_pipeline,
+            modality=input_modality,
+            classes=class_names,
+            test_mode=True,
+            box_type_3d='LiDAR'))
 
 evaluation = dict(interval=2)
 
 # model settings
 model = dict(
     bbox_head=dict(
-        num_classes=1,
+        num_classes=2,
         bbox_coder=dict(
             type='AnchorFreeBBoxCoder', num_dir_bins=12, with_rot=True)))
 
@@ -116,7 +142,7 @@ runner = dict(type='EpochBasedRunner', max_epochs=80)
 
 # yapf:disable
 log_config = dict(
-    interval=1,
+    interval=30,
     hooks=[
         dict(type='TextLoggerHook'),
         dict(type='TensorboardLoggerHook')
